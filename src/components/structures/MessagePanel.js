@@ -27,10 +27,8 @@ import MatrixClientPeg from '../../MatrixClientPeg';
 
 /* (almost) stateless UI component which builds the event tiles in the room timeline.
  */
-module.exports = React.createClass({
-    displayName: 'MessagePanel',
-
-    propTypes: {
+export default class MessagePanel extends React.PureComponent {
+    static propTypes = {
         // true to give the component a 'display: none' style.
         hidden: PropTypes.bool,
 
@@ -89,9 +87,9 @@ module.exports = React.createClass({
 
         // show timestamps always
         alwaysShowTimestamps: PropTypes.bool,
-    },
+    };
 
-    componentWillMount: function() {
+    componentWillMount() {
         // the event after which we put a visible unread marker on the last
         // render cycle; null if readMarkerVisible was false or the RM was
         // suppressed (eg because it was at the end of the timeline)
@@ -110,37 +108,37 @@ module.exports = React.createClass({
         this._readMarkerGhostNode = null;
 
         this._isMounted = true;
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this._isMounted = false;
-    },
+    }
 
     /* get the DOM node representing the given event */
-    getNodeForEventId: function(eventId) {
+    getNodeForEventId = (eventId) => {
         if (!this.eventNodes) {
             return undefined;
         }
 
         return this.eventNodes[eventId];
-    },
+    };
 
     /* return true if the content is fully scrolled down right now; else false.
      */
-    isAtBottom: function() {
+    isAtBottom = () => {
         return this.refs.scrollPanel
             && this.refs.scrollPanel.isAtBottom();
-    },
+    };
 
     /* get the current scroll state. See ScrollPanel.getScrollState for
      * details.
      *
      * returns null if we are not mounted.
      */
-    getScrollState: function() {
+    getScrollState = () => {
         if (!this.refs.scrollPanel) { return null; }
         return this.refs.scrollPanel.getScrollState();
-    },
+    };
 
     // returns one of:
     //
@@ -148,7 +146,7 @@ module.exports = React.createClass({
     //  -1: read marker is above the window
     //   0: read marker is within the window
     //  +1: read marker is below the window
-    getReadMarkerPosition: function() {
+    getReadMarkerPosition = () => {
         const readMarker = this.refs.readMarkerNode;
         const messageWrapper = this.refs.scrollPanel;
 
@@ -168,43 +166,43 @@ module.exports = React.createClass({
         } else {
             return 1;
         }
-    },
+    };
 
     /* jump to the top of the content.
      */
-    scrollToTop: function() {
+    scrollToTop = () => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.scrollToTop();
         }
-    },
+    };
 
     /* jump to the bottom of the content.
      */
-    scrollToBottom: function() {
+    scrollToBottom = () => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.scrollToBottom();
         }
-    },
+    };
 
     /**
      * Page up/down.
      *
      * mult: -1 to page up, +1 to page down
      */
-    scrollRelative: function(mult) {
+    scrollRelative = (mult) => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.scrollRelative(mult);
         }
-    },
+    };
 
     /**
      * Scroll up/down in response to a scroll key
      */
-    handleScrollKey: function(ev) {
+    handleScrollKey = (ev) => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.handleScrollKey(ev);
         }
-    },
+    };
 
     /* jump to the given event id.
      *
@@ -216,26 +214,26 @@ module.exports = React.createClass({
      * node (specifically, the bottom of it) will be positioned. If omitted, it
      * defaults to 0.
      */
-    scrollToEvent: function(eventId, pixelOffset, offsetBase) {
+    scrollToEvent = (eventId, pixelOffset, offsetBase) => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.scrollToToken(eventId, pixelOffset, offsetBase);
         }
-    },
+    };
 
     /* check the scroll state and send out pagination requests if necessary.
      */
-    checkFillState: function() {
+    checkFillState = () => {
         if (this.refs.scrollPanel) {
             this.refs.scrollPanel.checkFillState();
         }
-    },
+    };
 
-    _isUnmounting: function() {
+    _isUnmounting = () => {
         return !this._isMounted;
-    },
+    };
 
     // TODO: Implement granular (per-room) hide options
-    _shouldShowEvent: function(mxEv) {
+    _shouldShowEvent = (mxEv) => {
         if (mxEv.sender && MatrixClientPeg.get().isUserIgnored(mxEv.sender.userId)) {
             return false; // ignored = no show (only happens if the ignore happens after an event was received)
         }
@@ -249,9 +247,9 @@ module.exports = React.createClass({
         if (this.props.highlightedEventId === mxEv.getId()) return true;
 
         return !shouldHideEvent(mxEv);
-    },
+    };
 
-    _getEventTiles: function() {
+    _getEventTiles = () => {
         const DateSeparator = sdk.getComponent('messages.DateSeparator');
         const MemberEventListSummary = sdk.getComponent('views.elements.MemberEventListSummary');
 
@@ -437,9 +435,9 @@ module.exports = React.createClass({
 
         this.currentReadMarkerEventId = readMarkerVisible ? this.props.readMarkerEventId : null;
         return ret;
-    },
+    };
 
-    _getTilesForEvent: function(prevEvent, mxEv, last) {
+    _getTilesForEvent = (prevEvent, mxEv, last) => {
         const EventTile = sdk.getComponent('rooms.EventTile');
         const DateSeparator = sdk.getComponent('messages.DateSeparator');
         const ret = [];
@@ -522,20 +520,20 @@ module.exports = React.createClass({
         );
 
         return ret;
-    },
+    };
 
-    _wantsDateSeparator: function(prevEvent, nextEventDate) {
+    _wantsDateSeparator = (prevEvent, nextEventDate) => {
         if (prevEvent == null) {
             // first event in the panel: depends if we could back-paginate from
             // here.
             return !this.props.suppressFirstDateSeparator;
         }
         return wantsDateSeparator(prevEvent.getDate(), nextEventDate);
-    },
+    };
 
     // get a list of read receipts that should be shown next to this event
     // Receipts are objects which have a 'roomMember' and 'ts'.
-    _getReadReceiptsForEvent: function(event) {
+    _getReadReceiptsForEvent = (event) => {
         const myUserId = MatrixClientPeg.get().credentials.userId;
 
         // get list of read receipts, sorted most recent first
@@ -564,9 +562,9 @@ module.exports = React.createClass({
         return receipts.sort((r1, r2) => {
             return r2.ts - r1.ts;
         });
-    },
+    };
 
-    _getReadMarkerTile: function(visible) {
+    _getReadMarkerTile = (visible) => {
         let hr;
         if (visible) {
             hr = <hr className="mx_RoomView_myReadMarker"
@@ -580,9 +578,9 @@ module.exports = React.createClass({
                 { hr }
             </li>
         );
-    },
+    };
 
-    _startAnimation: function(ghostNode) {
+    _startAnimation = (ghostNode) => {
         if (this._readMarkerGhostNode) {
             Velocity.Utilities.removeData(this._readMarkerGhostNode);
         }
@@ -593,9 +591,9 @@ module.exports = React.createClass({
                      {duration: 400, easing: 'easeInSine',
                       delay: 1000});
         }
-    },
+    };
 
-    _getReadMarkerGhostTile: function() {
+    _getReadMarkerGhostTile = () => {
         const hr = <hr className="mx_RoomView_myReadMarker"
                   style={{opacity: 1, width: '99%'}}
                   ref={this._startAnimation}
@@ -610,26 +608,26 @@ module.exports = React.createClass({
                 { hr }
             </li>
         );
-    },
+    };
 
-    _collectEventNode: function(eventId, node) {
+    _collectEventNode = (eventId, node) => {
         this.eventNodes[eventId] = node;
-    },
+    };
 
     // once dynamic content in the events load, make the scrollPanel check the
     // scroll offsets.
-    _onWidgetLoad: function() {
+    _onWidgetLoad = () => {
         const scrollPanel = this.refs.scrollPanel;
         if (scrollPanel) {
             scrollPanel.forceUpdate();
         }
-    },
+    };
 
-    onResize: function() {
+    onResize = () => {
         dis.dispatch({ action: 'timeline_resize' }, true);
-    },
+    };
 
-    render: function() {
+    render() {
         const ScrollPanel = sdk.getComponent("structures.ScrollPanel");
         const Spinner = sdk.getComponent("elements.Spinner");
         let topSpinner, bottomSpinner;
@@ -662,5 +660,5 @@ module.exports = React.createClass({
                 { bottomSpinner }
             </ScrollPanel>
         );
-    },
-});
+    }
+};

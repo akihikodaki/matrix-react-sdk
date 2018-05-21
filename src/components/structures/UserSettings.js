@@ -126,13 +126,13 @@ const THEMES = [
     { label: _td('Status.im theme'), value: 'status' },
 ];
 
-const IgnoredUser = React.createClass({
-    propTypes: {
+class IgnoredUser extends React.PureComponent {
+    static propTypes = {
         userId: PropTypes.string.isRequired,
         onUnignored: PropTypes.func.isRequired,
-    },
+    };
 
-    _onUnignoreClick: function() {
+    _onUnignoreClick = () => {
         const ignoredUsers = MatrixClientPeg.get().getIgnoredUsers();
         const index = ignoredUsers.indexOf(this.props.userId);
         if (index !== -1) {
@@ -140,9 +140,9 @@ const IgnoredUser = React.createClass({
             MatrixClientPeg.get().setIgnoredUsers(ignoredUsers)
                 .then(() => this.props.onUnignored(this.props.userId));
         } else this.props.onUnignored(this.props.userId);
-    },
+    };
 
-    render: function() {
+    render() {
         return (
             <li>
                 <AccessibleButton onClick={this._onUnignoreClick} className="mx_textButton">
@@ -151,13 +151,11 @@ const IgnoredUser = React.createClass({
                 { this.props.userId }
             </li>
         );
-    },
-});
+    }
+}
 
-module.exports = React.createClass({
-    displayName: 'UserSettings',
-
-    propTypes: {
+export default class UserSettings extends React.PureComponent {
+    static propTypes = {
         onClose: PropTypes.func,
         // The brand string given when creating email pushers
         brand: PropTypes.string,
@@ -168,28 +166,24 @@ module.exports = React.createClass({
         // Team token for the referral link. If falsy, the referral section will
         // not appear
         teamToken: PropTypes.string,
-    },
+    };
 
-    getDefaultProps: function() {
-        return {
-            onClose: function() {},
-        };
-    },
+    static defaultProps = {
+        onClose: function() {},
+    };
 
-    getInitialState: function() {
-        return {
-            avatarUrl: null,
-            threepids: [],
-            phase: "UserSettings.LOADING", // LOADING, DISPLAY
-            email_add_pending: false,
-            vectorVersion: undefined,
-            rejectingInvites: false,
-            mediaDevices: null,
-            ignoredUsers: [],
-        };
-    },
+    state = {
+        avatarUrl: null,
+        threepids: [],
+        phase: "UserSettings.LOADING", // LOADING, DISPLAY
+        email_add_pending: false,
+        vectorVersion: undefined,
+        rejectingInvites: false,
+        mediaDevices: null,
+        ignoredUsers: [],
+    };
 
-    componentWillMount: function() {
+    componentWillMount() {
         this._unmounted = false;
         this._addThreepid = null;
 
@@ -238,14 +232,14 @@ module.exports = React.createClass({
             this._setStateFromSessionStore,
         );
         this._setStateFromSessionStore();
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.dispatcherRef = dis.register(this.onAction);
         this._me = MatrixClientPeg.get().credentials.userId;
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this._unmounted = true;
         dis.dispatch({
             action: 'panel_disable',
@@ -262,7 +256,7 @@ module.exports = React.createClass({
             const {ipcRenderer} = require('electron');
             ipcRenderer.removeListener('settings', this._electronSettings);
         }
-    },
+    }
 
     // `UserSettings` assumes that the client peg will not be null, so give it some
     // sort of assurance here by only allowing a re-render if the client is truthy.
@@ -270,21 +264,21 @@ module.exports = React.createClass({
     // This is required because `UserSettings` maintains its own state and if this state
     // updates (e.g. during _setStateFromSessionStore) after the client peg has been made
     // null (during logout), then it will attempt to re-render and throw errors.
-    shouldComponentUpdate: function() {
+    shouldComponentUpdate() {
         return Boolean(MatrixClientPeg.get());
-    },
+    }
 
-    _setStateFromSessionStore: function() {
+    _setStateFromSessionStore = () => {
         this.setState({
             userHasGeneratedPassword: Boolean(this._sessionStore.getCachedPassword()),
         });
-    },
+    };
 
-    _electronSettings: function(ev, settings) {
+    _electronSettings = (ev, settings) => {
         this.setState({ electron_settings: settings });
-    },
+    };
 
-    _refreshMediaDevices: function() {
+    _refreshMediaDevices = () => {
         Promise.resolve().then(() => {
             return CallMediaHandler.getDevices();
         }).then((mediaDevices) => {
@@ -296,9 +290,9 @@ module.exports = React.createClass({
                 activeVideoInput: SettingsStore.getValueAt(SettingLevel.DEVICE, 'webrtc_videoinput'),
             });
         });
-    },
+    };
 
-    _refreshFromServer: function() {
+    _refreshFromServer = () => {
         const self = this;
         Promise.all([
             UserSettingsStore.loadProfileInfo(), UserSettingsStore.loadThreePids(),
@@ -316,9 +310,9 @@ module.exports = React.createClass({
                 description: ((error && error.message) ? error.message : _t("Server may be unavailable or overloaded")),
             });
         });
-    },
+    };
 
-    _refreshIgnoredUsers: function(userIdUnignored=null) {
+    _refreshIgnoredUsers = (userIdUnignored=null) => {
         const users = MatrixClientPeg.get().getIgnoredUsers();
         if (userIdUnignored) {
             const index = users.indexOf(userIdUnignored);
@@ -327,23 +321,23 @@ module.exports = React.createClass({
         this.setState({
             ignoredUsers: users,
         });
-    },
+    };
 
-    onAction: function(payload) {
+    onAction = (payload) => {
         if (payload.action === "notifier_enabled") {
             this.forceUpdate();
         } else if (payload.action === "ignore_state_changed") {
             this._refreshIgnoredUsers();
         }
-    },
+    };
 
-    onAvatarPickerClick: function(ev) {
+    onAvatarPickerClick = (ev) => {
         if (this.refs.file_label) {
             this.refs.file_label.click();
         }
-    },
+    };
 
-    onAvatarSelected: function(ev) {
+    onAvatarSelected = (ev) => {
         const self = this;
         const changeAvatar = this.refs.changeAvatar;
         if (!changeAvatar) {
@@ -362,14 +356,14 @@ module.exports = React.createClass({
                 description: ((err && err.message) ? err.message : _t("Operation failed")),
             });
         });
-    },
+    };
 
-    onAvatarRemoveClick: function() {
+    onAvatarRemoveClick = () => {
         MatrixClientPeg.get().setAvatarUrl(null);
         this.setState({avatarUrl: null}); // the avatar update will complete async for us
-    },
+    };
 
-    onLogoutClicked: function(ev) {
+    onLogoutClicked = (ev) => {
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
         Modal.createTrackedDialog('Logout E2E Export', '', QuestionDialog, {
             title: _t("Sign out"),
@@ -396,9 +390,9 @@ module.exports = React.createClass({
                 }
             },
         });
-    },
+    };
 
-    onPasswordChangeError: function(err) {
+    onPasswordChangeError = (err) => {
         let errMsg = err.error || "";
         if (err.httpStatus === 403) {
             errMsg = _t("Failed to change password. Is your password correct?");
@@ -411,9 +405,9 @@ module.exports = React.createClass({
             title: _t("Error"),
             description: errMsg,
         });
-    },
+    };
 
-    onPasswordChanged: function() {
+    onPasswordChanged = () => {
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         Modal.createTrackedDialog('Password changed', '', ErrorDialog, {
             title: _t("Success"),
@@ -423,14 +417,14 @@ module.exports = React.createClass({
             ) + ".",
         });
         dis.dispatch({action: 'password_changed'});
-    },
+    };
 
-    _onAddEmailEditFinished: function(value, shouldSubmit) {
+    _onAddEmailEditFinished = (value, shouldSubmit) => {
         if (!shouldSubmit) return;
         this._addEmail();
-    },
+    };
 
-    _addEmail: function() {
+    _addEmail = () => {
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
 
@@ -465,9 +459,9 @@ module.exports = React.createClass({
         });
         ReactDOM.findDOMNode(this.refs.add_email_input).blur();
         this.setState({email_add_pending: true});
-    },
+    };
 
-    onRemoveThreepidClicked: function(threepid) {
+    onRemoveThreepidClicked = (threepid) => {
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
         Modal.createTrackedDialog('Remove 3pid', '', QuestionDialog, {
             title: _t("Remove Contact Information?"),
@@ -491,17 +485,17 @@ module.exports = React.createClass({
                 }
             },
         });
-    },
+    };
 
-    onEmailDialogFinished: function(ok) {
+    onEmailDialogFinished = (ok) => {
         if (ok) {
             this.verifyEmailAddress();
         } else {
             this.setState({email_add_pending: false});
         }
-    },
+    };
 
-    verifyEmailAddress: function() {
+    verifyEmailAddress = () => {
         this._addThreepid.checkEmailLinkClicked().done(() => {
             this._addThreepid = null;
             this.setState({
@@ -530,37 +524,37 @@ module.exports = React.createClass({
                 });
             }
         });
-    },
+    };
 
-    _onDeactivateAccountClicked: function() {
+    _onDeactivateAccountClicked = () => {
         const DeactivateAccountDialog = sdk.getComponent("dialogs.DeactivateAccountDialog");
         Modal.createTrackedDialog('Deactivate Account', '', DeactivateAccountDialog, {});
-    },
+    };
 
-    _onBugReportClicked: function() {
+    _onBugReportClicked = () => {
         const BugReportDialog = sdk.getComponent("dialogs.BugReportDialog");
         if (!BugReportDialog) {
             return;
         }
         Modal.createTrackedDialog('Bug Report Dialog', '', BugReportDialog, {});
-    },
+    };
 
-    _onClearCacheClicked: function() {
+    _onClearCacheClicked = () => {
         if (!PlatformPeg.get()) return;
 
         MatrixClientPeg.get().stopClient();
         MatrixClientPeg.get().store.deleteAllData().done(() => {
             PlatformPeg.get().reload();
         });
-    },
+    };
 
-    _onInviteStateChange: function(event, member, oldMembership) {
+    _onInviteStateChange = (event, member, oldMembership) => {
         if (member.userId === this._me && oldMembership === "invite") {
             this.forceUpdate();
         }
-    },
+    };
 
-    _onRejectAllInvitesClicked: function(rooms, ev) {
+    _onRejectAllInvitesClicked = (rooms, ev) => {
         this.setState({
             rejectingInvites: true,
         });
@@ -576,9 +570,9 @@ module.exports = React.createClass({
                 rejectingInvites: false,
             });
         });
-    },
+    };
 
-    _onExportE2eKeysClicked: function() {
+    _onExportE2eKeysClicked = () => {
         Modal.createTrackedDialogAsync('Export E2E Keys', '', (cb) => {
             require.ensure(['../../async-components/views/dialogs/ExportE2eKeysDialog'], () => {
                 cb(require('../../async-components/views/dialogs/ExportE2eKeysDialog'));
@@ -586,9 +580,9 @@ module.exports = React.createClass({
         }, {
             matrixClient: MatrixClientPeg.get(),
         });
-    },
+    };
 
-    _onImportE2eKeysClicked: function() {
+    _onImportE2eKeysClicked = () => {
         Modal.createTrackedDialogAsync('Import E2E Keys', '', (cb) => {
             require.ensure(['../../async-components/views/dialogs/ImportE2eKeysDialog'], () => {
                 cb(require('../../async-components/views/dialogs/ImportE2eKeysDialog'));
@@ -596,14 +590,14 @@ module.exports = React.createClass({
         }, {
             matrixClient: MatrixClientPeg.get(),
         });
-    },
+    };
 
-    _renderGroupSettings: function() {
+    _renderGroupSettings = () => {
         const GroupUserSettings = sdk.getComponent('groups.GroupUserSettings');
         return <GroupUserSettings />;
-    },
+    };
 
-    _renderReferral: function() {
+    _renderReferral = () => {
         const teamToken = this.props.teamToken;
         if (!teamToken) {
             return null;
@@ -622,9 +616,9 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
+    };
 
-    onLanguageChange: function(newLang) {
+    onLanguageChange = (newLang) => {
         if (this.state.language !== newLang) {
             SettingsStore.setValue("language", null, SettingLevel.DEVICE, newLang);
             this.setState({
@@ -632,9 +626,9 @@ module.exports = React.createClass({
             });
             PlatformPeg.get().reload();
         }
-    },
+    };
 
-    _renderLanguageSetting: function() {
+    _renderLanguageSetting = () => {
         const LanguageDropdown = sdk.getComponent('views.elements.LanguageDropdown');
         return <div>
             <label htmlFor="languageSelector">{ _t('Interface Language') }</label>
@@ -643,9 +637,9 @@ module.exports = React.createClass({
                           value={this.state.language}
             />
         </div>;
-    },
+    };
 
-    _renderUserInterfaceSettings: function() {
+    _renderUserInterfaceSettings = () => {
         // TODO: this ought to be a separate component so that we don't need
         // to rebind the onChange each time we render
         const onChange = (e) =>
@@ -674,9 +668,9 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
+    };
 
-    _renderAccountSetting: function(setting) {
+    _renderAccountSetting = (setting) => {
         const SettingsFlag = sdk.getComponent("elements.SettingsFlag");
         return (
             <div className="mx_UserSettings_toggle" key={setting.id}>
@@ -686,9 +680,9 @@ module.exports = React.createClass({
                                   onChange={setting.fn} />
             </div>
         );
-    },
+    };
 
-    _renderThemeOption: function(setting) {
+    _renderThemeOption = (setting) => {
         const SettingsFlag = sdk.getComponent("elements.SettingsFlag");
         const onChange = (v) => dis.dispatch({action: 'set_theme', value: setting.value});
         return (
@@ -701,9 +695,9 @@ module.exports = React.createClass({
                                   value={setting.value} />
             </div>
         );
-    },
+    };
 
-    _renderCryptoInfo: function() {
+    _renderCryptoInfo = () => {
         const client = MatrixClientPeg.get();
         const deviceId = client.deviceId;
         let identityKey = client.getDeviceEd25519Key();
@@ -746,9 +740,9 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
+    };
 
-    _renderIgnoredUsers: function() {
+    _renderIgnoredUsers = () => {
         if (this.state.ignoredUsers.length > 0) {
             const updateHandler = this._refreshIgnoredUsers;
             return (
@@ -766,9 +760,9 @@ module.exports = React.createClass({
                 </div>
             );
         } else return (<div />);
-    },
+    };
 
-    _renderDeviceSetting: function(setting) {
+    _renderDeviceSetting = (setting) => {
         const SettingsFlag = sdk.getComponent("elements.SettingsFlag");
         return (
             <div className="mx_UserSettings_toggle" key={setting.id}>
@@ -778,9 +772,9 @@ module.exports = React.createClass({
                               onChange={setting.fn} />
             </div>
         );
-    },
+    };
 
-    _renderDevicesPanel: function() {
+    _renderDevicesPanel = () => {
         const DevicesPanel = sdk.getComponent('settings.DevicesPanel');
         return (
             <div>
@@ -788,9 +782,9 @@ module.exports = React.createClass({
                 <DevicesPanel className="mx_UserSettings_section" />
             </div>
         );
-    },
+    };
 
-    _renderBugReport: function() {
+    _renderBugReport = () => {
         if (!SdkConfig.get().bug_report_endpoint_url) {
             return <div />;
         }
@@ -812,9 +806,9 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
+    };
 
-    _renderAnalyticsControl: function() {
+    _renderAnalyticsControl = () => {
         if (!SdkConfig.get().piwik) return <div />;
 
         return <div>
@@ -830,9 +824,9 @@ module.exports = React.createClass({
                 { ANALYTICS_SETTINGS.map( this._renderDeviceSetting ) }
             </div>
         </div>;
-    },
+    };
 
-    _renderLabs: function() {
+    _renderLabs = () => {
         const features = [];
         SettingsStore.getLabsFeatures().forEach((featureId) => {
             // TODO: this ought to be a separate component so that we don't need
@@ -869,9 +863,9 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
+    };
 
-    _renderDeactivateAccount: function() {
+    _renderDeactivateAccount = () => {
         return <div>
             <h3>{ _t("Deactivate Account") }</h3>
                 <div className="mx_UserSettings_section">
@@ -880,9 +874,9 @@ module.exports = React.createClass({
                     </AccessibleButton>
                 </div>
         </div>;
-    },
+    };
 
-    _renderClearCache: function() {
+    _renderClearCache = () => {
         return <div>
             <h3>{ _t("Clear Cache") }</h3>
                 <div className="mx_UserSettings_section">
@@ -892,9 +886,9 @@ module.exports = React.createClass({
                     </AccessibleButton>
                 </div>
         </div>;
-    },
+    };
 
-    _renderCheckUpdate: function() {
+    _renderCheckUpdate = () => {
         const platform = PlatformPeg.get();
         if ('canSelfUpdate' in platform && platform.canSelfUpdate() && 'startUpdateCheck' in platform) {
             return <div>
@@ -907,9 +901,9 @@ module.exports = React.createClass({
             </div>;
         }
         return <div />;
-    },
+    };
 
-    _renderBulkOptions: function() {
+    _renderBulkOptions = () => {
         const invitedRooms = MatrixClientPeg.get().getRooms().filter((r) => {
             return r.hasMembershipState(this._me, "invite");
         });
@@ -938,9 +932,9 @@ module.exports = React.createClass({
                     { reject }
                 </div>
         </div>;
-    },
+    };
 
-    _renderElectronSettings: function() {
+    _renderElectronSettings = () => {
         const settings = this.state.electron_settings;
         if (!settings) return;
 
@@ -959,28 +953,28 @@ module.exports = React.createClass({
                 </div>
             </div>
         </div>;
-    },
+    };
 
-    _onAutoLaunchChanged: function(e) {
+    _onAutoLaunchChanged = (e) => {
         const {ipcRenderer} = require('electron');
         ipcRenderer.send('settings_set', 'auto-launch', e.target.checked);
-    },
+    };
 
-    _mapWebRtcDevicesToSpans: function(devices) {
+    _mapWebRtcDevicesToSpans = (devices) => {
         return devices.map((device) => <span key={device.deviceId}>{ device.label }</span>);
-    },
+    };
 
-    _setAudioInput: function(deviceId) {
+    _setAudioInput = (deviceId) => {
         this.setState({activeAudioInput: deviceId});
         CallMediaHandler.setAudioInput(deviceId);
-    },
+    };
 
-    _setVideoInput: function(deviceId) {
+    _setVideoInput = (deviceId) => {
         this.setState({activeVideoInput: deviceId});
         CallMediaHandler.setVideoInput(deviceId);
-    },
+    };
 
-    _requestMediaPermissions: function(event) {
+    _requestMediaPermissions = (event) => {
         const getUserMedia = (
             window.navigator.getUserMedia || window.navigator.webkitGetUserMedia || window.navigator.mozGetUserMedia
         );
@@ -997,9 +991,9 @@ module.exports = React.createClass({
                 },
             ]);
         }
-    },
+    };
 
-    _renderWebRtcDeviceSettings: function() {
+    _renderWebRtcDeviceSettings = () => {
         if (this.state.mediaDevices === false) {
             return (
                 <p className="mx_UserSettings_link" onClick={this._requestMediaPermissions}>
@@ -1062,9 +1056,9 @@ module.exports = React.createClass({
                 { microphoneDropdown }
                 { webcamDropdown }
         </div>;
-    },
+    };
 
-    _renderWebRtcSettings: function() {
+    _renderWebRtcSettings = () => {
         return <div>
             <h3>{ _t('VoIP') }</h3>
             <div className="mx_UserSettings_section">
@@ -1072,9 +1066,9 @@ module.exports = React.createClass({
                 { this._renderWebRtcDeviceSettings() }
             </div>
         </div>;
-    },
+    };
 
-    _showSpoiler: function(event) {
+    _showSpoiler = (event) => {
         const target = event.target;
         target.innerHTML = target.getAttribute('data-spoiler');
 
@@ -1084,23 +1078,23 @@ module.exports = React.createClass({
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
-    },
+    };
 
-    nameForMedium: function(medium) {
+    nameForMedium = (medium) => {
         if (medium === 'msisdn') return _t('Phone');
         if (medium === 'email') return _t('Email');
         return medium[0].toUpperCase() + medium.slice(1);
-    },
+    };
 
-    presentableTextForThreepid: function(threepid) {
+    presentableTextForThreepid = (threepid) => {
         if (threepid.medium === 'msisdn') {
             return '+' + threepid.address;
         } else {
             return threepid.address;
         }
-    },
+    };
 
-    render: function() {
+    render() {
         const Loader = sdk.getComponent("elements.Spinner");
         switch (this.state.phase) {
             case "UserSettings.LOADING":
@@ -1333,5 +1327,5 @@ module.exports = React.createClass({
                 </GeminiScrollbarWrapper>
             </div>
         );
-    },
-});
+    }
+}

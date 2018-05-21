@@ -24,24 +24,21 @@ import Flair from '../elements/Flair.js';
 import FlairStore from '../../../stores/FlairStore';
 import { _t } from '../../../languageHandler';
 
-export default React.createClass({
-    displayName: 'SenderProfile',
-    propTypes: {
+export default class SenderProfile extends React.Component {
+    static propTypes = {
         mxEvent: PropTypes.object.isRequired, // event whose sender we're showing
         text: PropTypes.string, // Text to show. Defaults to sender name
         onClick: PropTypes.func,
-    },
+    };
 
-    contextTypes: {
+    static contextTypes = {
         matrixClient: PropTypes.instanceOf(MatrixClient),
-    },
+    };
 
-    getInitialState() {
-        return {
-            userGroups: null,
-            relatedGroups: [],
-        };
-    },
+    state = {
+        userGroups: null,
+        relatedGroups: [],
+    };
 
     componentWillMount() {
         this.unmounted = false;
@@ -55,22 +52,22 @@ export default React.createClass({
         });
 
         this.context.matrixClient.on('RoomState.events', this.onRoomStateEvents);
-    },
+    }
 
     componentWillUnmount() {
         this.unmounted = true;
         this.context.matrixClient.removeListener('RoomState.events', this.onRoomStateEvents);
-    },
+    }
 
-    onRoomStateEvents(event) {
+    onRoomStateEvents = (event) => {
         if (event.getType() === 'm.room.related_groups' &&
             event.getRoomId() === this.props.mxEvent.getRoomId()
         ) {
             this._updateRelatedGroups();
         }
-    },
+    };
 
-    _updateRelatedGroups() {
+    _updateRelatedGroups = () => {
         if (this.unmounted) return;
         const relatedGroupsEvent = this.context.matrixClient
             .getRoom(this.props.mxEvent.getRoomId())
@@ -81,9 +78,9 @@ export default React.createClass({
                 relatedGroupsEvent.getContent().groups || []
                 : [],
         });
-    },
+    };
 
-    _getDisplayedGroups(userGroups, relatedGroups) {
+    _getDisplayedGroups = (userGroups, relatedGroups) => {
         let displayedGroups = userGroups || [];
         if (relatedGroups && relatedGroups.length > 0) {
             displayedGroups = displayedGroups.filter((groupId) => {
@@ -93,7 +90,7 @@ export default React.createClass({
             displayedGroups = [];
         }
         return displayedGroups;
-    },
+    };
 
     render() {
         const EmojiText = sdk.getComponent('elements.EmojiText');
@@ -140,5 +137,5 @@ export default React.createClass({
                 { content }
             </div>
         );
-    },
-});
+    }
+}

@@ -38,12 +38,10 @@ var debug = false;
 
 const TRUNCATE_AT = 10;
 
-var RoomSubList = React.createClass({
-    displayName: 'RoomSubList',
+class RoomSubList extends React.PureComponent {
+    debug = debug;
 
-    debug: debug,
-
-    propTypes: {
+    static propTypes = {
         list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
         label: React.PropTypes.string.isRequired,
         tagName: React.PropTypes.string,
@@ -65,63 +63,59 @@ var RoomSubList = React.createClass({
         emptyContent: React.PropTypes.node, // content shown if the list is empty
         headerItems: React.PropTypes.node, // content shown in the sublist header
         extraTiles: React.PropTypes.arrayOf(React.PropTypes.node), // extra elements added beneath tiles
-    },
+    };
 
-    getInitialState: function() {
-        return {
-            hidden: this.props.startAsHidden || false,
-            truncateAt: TRUNCATE_AT,
-            sortedList: [],
-        };
-    },
+    state = {
+        hidden: this.props.startAsHidden || false,
+        truncateAt: TRUNCATE_AT,
+        sortedList: [],
+    };
 
-    getDefaultProps: function() {
-        return {
-            onHeaderClick: function() {}, // NOP
-            onShowMoreRooms: function() {}, // NOP
-            extraTiles: [],
-            isInvite: false,
-        };
-    },
+    static defaultProps = {
+        onHeaderClick: function() {}, // NOP
+        onShowMoreRooms: function() {}, // NOP
+        extraTiles: [],
+        isInvite: false,
+    };
 
-    componentWillMount: function() {
+    componentWillMount() {
         this.setState({
             sortedList: this.applySearchFilter(this.props.list, this.props.searchFilter),
         });
         this.dispatcherRef = dis.register(this.onAction);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         dis.unregister(this.dispatcherRef);
-    },
+    }
 
-    componentWillReceiveProps: function(newProps) {
+    componentWillReceiveProps(newProps) {
         // order the room list appropriately before we re-render
         //if (debug) console.log("received new props, list = " + newProps.list);
         this.setState({
             sortedList: this.applySearchFilter(newProps.list, newProps.searchFilter),
         });
-    },
+    }
 
-    applySearchFilter: function(list, filter) {
+    applySearchFilter(list, filter) {
         if (filter === "") return list;
         return list.filter((room) => {
             return room.name && room.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0
         });
-    },
+    }
 
     // The header is collapsable if it is hidden or not stuck
     // The dataset elements are added in the RoomList _initAndPositionStickyHeaders method
-    isCollapsableOnClick: function() {
+    isCollapsableOnClick() {
         var stuck = this.refs.header.dataset.stuck;
         if (this.state.hidden || stuck === undefined || stuck === "none") {
             return true;
         } else {
             return false;
         }
-    },
+    }
 
-    onAction: function(payload) {
+    onAction = (payload) => {
         // XXX: Previously RoomList would forceUpdate whenever on_room_read is dispatched,
         // but this is no longer true, so we must do it here (and can apply the small
         // optimisation of checking that we care about the room being read).
@@ -134,9 +128,9 @@ var RoomSubList = React.createClass({
         ) {
             this.forceUpdate();
         }
-    },
+    };
 
-    onClick: function(ev) {
+    onClick = (ev) => {
         if (this.isCollapsableOnClick()) {
             // The header isCollapsable, so the click is to be interpreted as collapse and truncation logic
             var isHidden = !this.state.hidden;
@@ -153,24 +147,24 @@ var RoomSubList = React.createClass({
             // The header is stuck, so the click is to be interpreted as a scroll to the header
             this.props.onHeaderClick(this.state.hidden, this.refs.header.dataset.originalPosition);
         }
-    },
+    };
 
-    onRoomTileClick(roomId, ev) {
+    onRoomTileClick = (roomId, ev) => {
         dis.dispatch({
             action: 'view_room',
             room_id: roomId,
             clear_search: (ev && (ev.keyCode == KeyCode.ENTER || ev.keyCode == KeyCode.SPACE)),
         });
-    },
+    };
 
-    _shouldShowNotifBadge: function(roomNotifState) {
+    _shouldShowNotifBadge(roomNotifState) {
         const showBadgeInStates = [RoomNotifs.ALL_MESSAGES, RoomNotifs.ALL_MESSAGES_LOUD];
         return showBadgeInStates.indexOf(roomNotifState) > -1;
-    },
+    }
 
-    _shouldShowMentionBadge: function(roomNotifState) {
+    _shouldShowMentionBadge(roomNotifState) {
         return roomNotifState != RoomNotifs.MUTE;
-    },
+    }
 
     /**
      * Total up all the notification counts from the rooms
@@ -178,7 +172,7 @@ var RoomSubList = React.createClass({
      * @param {Number} If supplied will only total notifications for rooms outside the truncation number
      * @returns {Array} The array takes the form [total, highlight] where highlight is a bool
      */
-    roomNotificationCount: function(truncateAt) {
+    roomNotificationCount(truncateAt) {
         var self = this;
 
         if (this.props.isInvite) {
@@ -204,16 +198,16 @@ var RoomSubList = React.createClass({
             }
             return result;
         }, [0, false]);
-    },
+    }
 
-    _updateSubListCount: function() {
+    _updateSubListCount = () => {
         // Force an update by setting the state to the current state
         // Doing it this way rather than using forceUpdate(), so that the shouldComponentUpdate()
         // method is honoured
         this.setState(this.state);
-    },
+    };
 
-    makeRoomTiles: function() {
+    makeRoomTiles() {
         const DNDRoomTile = sdk.getComponent("rooms.DNDRoomTile");
         const RoomTile = sdk.getComponent("rooms.RoomTile");
         return this.state.sortedList.map((room, index) => {
@@ -236,9 +230,9 @@ var RoomSubList = React.createClass({
                 onClick={this.onRoomTileClick}
             />;
         });
-    },
+    }
 
-    _getHeaderJsx: function() {
+    _getHeaderJsx() {
         var TintableSvg = sdk.getComponent("elements.TintableSvg");
 
         var subListNotifications = this.roomNotificationCount();
@@ -304,9 +298,9 @@ var RoomSubList = React.createClass({
                 </AccessibleButton>
             </div>
         );
-    },
+    }
 
-    _createOverflowTile: function(overflowCount, totalCount) {
+    _createOverflowTile = (overflowCount, totalCount) => {
         var content = <div className="mx_RoomSubList_chevronDown"></div>;
 
         var overflowNotifications = this.roomNotificationCount(TRUNCATE_AT);
@@ -329,18 +323,18 @@ var RoomSubList = React.createClass({
                 <div className={ badgeClasses }>{ content }</div>
             </AccessibleButton>
         );
-    },
+    };
 
-    _showFullMemberList: function() {
+    _showFullMemberList = () => {
         this.setState({
             truncateAt: -1
         });
 
         this.props.onShowMoreRooms();
         this.props.onHeaderClick(false);
-    },
+    };
 
-    render: function() {
+    render() {
         var connectDropTarget = this.props.connectDropTarget;
         var TruncatedList = sdk.getComponent('elements.TruncatedList');
 
@@ -396,6 +390,6 @@ var RoomSubList = React.createClass({
             );
         }
     }
-});
+}
 
 module.exports = RoomSubList;

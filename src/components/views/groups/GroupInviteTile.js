@@ -21,25 +21,23 @@ import sdk from '../../../index';
 import dis from '../../../dispatcher';
 import AccessibleButton from '../elements/AccessibleButton';
 
-export default React.createClass({
-    displayName: 'GroupInviteTile',
-
-    propTypes: {
+export default class GroupInviteTile extends React.Component {
+    static propTypes = {
         group: PropTypes.object.isRequired,
-    },
+    };
 
-    contextTypes: {
+    static contextTypes = {
         matrixClient: PropTypes.instanceOf(MatrixClient),
-    },
+    };
 
-    onClick: function(e) {
+    onClick = (e) => {
         dis.dispatch({
             action: 'view_group',
             group_id: this.props.group.groupId,
         });
-    },
+    };
 
-    render: function() {
+    render() {
         const BaseAvatar = sdk.getComponent('avatars.BaseAvatar');
         const EmojiText = sdk.getComponent('elements.EmojiText');
 
@@ -71,5 +69,5 @@ export default React.createClass({
                 </div>
             </AccessibleButton>
         );
-    },
-});
+    }
+}

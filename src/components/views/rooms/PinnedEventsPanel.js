@@ -22,26 +22,23 @@ import PinnedEventTile from "./PinnedEventTile";
 import { _t } from '../../../languageHandler';
 import PinningUtils from "../../../utils/PinningUtils";
 
-module.exports = React.createClass({
-    displayName: 'PinnedEventsPanel',
-    propTypes: {
+export default class PinnedEventsPanel extends React.PureComponent {
+    static propTypes = {
         // The Room from the js-sdk we're going to show pinned events for
         room: PropTypes.object.isRequired,
 
         onCancelClick: PropTypes.func,
-    },
+    };
 
-    getInitialState: function() {
-        return {
-            loading: true,
-        };
-    },
+    state = {
+        loading: true,
+    };
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._updatePinnedMessages();
-    },
+    }
 
-    _updatePinnedMessages: function() {
+    _updatePinnedMessages = () => {
         const pinnedEvents = this.props.room.currentState.getStateEvents("m.room.pinned_events", "");
         if (!pinnedEvents || !pinnedEvents.getContent().pinned) {
             this.setState({ loading: false, pinned: [] });
@@ -70,9 +67,9 @@ module.exports = React.createClass({
         }
 
         this._updateReadState();
-    },
+    };
 
-    _updateReadState: function() {
+    _updateReadState = () => {
         const pinnedEvents = this.props.room.currentState.getStateEvents("m.room.pinned_events", "");
         if (!pinnedEvents) return; // nothing to read
 
@@ -92,9 +89,9 @@ module.exports = React.createClass({
                 event_ids: readStateEvents,
             });
         }
-    },
+    };
 
-    _getPinnedTiles: function() {
+    _getPinnedTiles = () => {
         if (this.state.pinned.length === 0) {
             return (<div>{ _t("No pinned messages.") }</div>);
         }
@@ -105,9 +102,9 @@ module.exports = React.createClass({
                                      mxEvent={context.event}
                                      onUnpinned={this._updatePinnedMessages} />);
         });
-    },
+    };
 
-    render: function() {
+    render() {
         let tiles = <div>{ _t("Loading...") }</div>;
         if (this.state && !this.state.loading) {
             tiles = this._getPinnedTiles();
@@ -124,5 +121,5 @@ module.exports = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
