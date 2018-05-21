@@ -14,6 +14,8 @@
  limitations under the License.
  */
 
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import sdk from '../../../index';
 import request from 'browser-request';
@@ -88,7 +90,7 @@ export default class ChangelogDialog extends React.Component {
 }
 
 ChangelogDialog.propTypes = {
-    version: React.PropTypes.string.isRequired,
-    newVersion: React.PropTypes.string.isRequired,
-    onFinished: React.PropTypes.func.isRequired,
+    version: PropTypes.string.isRequired,
+    newVersion: PropTypes.string.isRequired,
+    onFinished: PropTypes.func.isRequired,
 };

@@ -86,9 +86,9 @@ export default class RightPanel extends React.Component {
     static propTypes = {
         // TODO: We're trying to move away from these being props, but we need to know
         // whether we should be displaying a room or group member list
-        roomId: React.PropTypes.string, // if showing panels for a given room, this is set
-        groupId: React.PropTypes.string, // if showing panels for a given group, this is set
-        collapsed: React.PropTypes.bool, // currently unused property to request for a minimized view of the panel
+        roomId: PropTypes.string, // if showing panels for a given room, this is set
+        groupId: PropTypes.string, // if showing panels for a given group, this is set
+        collapsed: PropTypes.bool, // currently unused property to request for a minimized view of the panel
     };
 
     static contextTypes = {

@@ -16,6 +16,8 @@ limitations under the License.
 
 'use strict';
 
+var PropTypes = require('prop-types');
+
 var React = require('react');
 var sdk = require('../../../index');
 var MatrixClientPeg = require('../../../MatrixClientPeg');
@@ -23,8 +25,8 @@ var dis = require('../../../dispatcher');
 
 export default class IntegrationsManager extends React.PureComponent {
     static propTypes = {
-        src: React.PropTypes.string.isRequired, // the source of the integration manager being embedded
-        onFinished: React.PropTypes.func.isRequired, // callback when the lightbox is dismissed
+        src: PropTypes.string.isRequired, // the source of the integration manager being embedded
+        onFinished: PropTypes.func.isRequired, // callback when the lightbox is dismissed
     };
 
     // XXX: keyboard shortcuts for managing dialogs should be done by the modal
@@ -58,4 +60,4 @@ export default class IntegrationsManager extends React.PureComponent {
             <iframe src={ this.props.src }></iframe>
         );
     }
-};
+}

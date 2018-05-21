@@ -62,7 +62,7 @@ export default class BaseDialog extends React.Component {
 
         // Id of content element
         // If provided, this is used to add a aria-describedby attribute
-        contentId: React.PropTypes.string,
+        contentId: PropTypes.string,
     };
 
     static defaultProps = {

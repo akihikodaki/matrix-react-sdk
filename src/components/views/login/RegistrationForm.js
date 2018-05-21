@@ -47,7 +47,7 @@ export default class RegistrationForm extends React.PureComponent {
         teamsConfig: PropTypes.shape({
             // Email address to request new teams
             supportEmail: PropTypes.string,
-            teams: PropTypes.arrayOf(React.PropTypes.shape({
+            teams: PropTypes.arrayOf(PropTypes.shape({
                 // The displayed name of the team
                 "name": PropTypes.string,
                 // The domain of team email addresses

@@ -23,7 +23,7 @@ import { _t } from '../../../languageHandler';
 export default class UserSelector extends React.PureComponent {
     static propTypes = {
         onChange: PropTypes.func,
-        selected_users: PropTypes.arrayOf(React.PropTypes.string),
+        selected_users: PropTypes.arrayOf(PropTypes.string),
     };
 
     static defaultProps = {

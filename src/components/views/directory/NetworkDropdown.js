@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import MatrixClientPeg from '../../../MatrixClientPeg';
 import {instanceForInstanceId} from '../../../utils/DirectoryUtils';
@@ -242,10 +244,10 @@ export default class NetworkDropdown extends React.Component {
 }
 
 NetworkDropdown.propTypes = {
-    onOptionChange: React.PropTypes.func.isRequired,
-    protocols: React.PropTypes.object,
+    onOptionChange: PropTypes.func.isRequired,
+    protocols: PropTypes.object,
     // The room directory config. May have a 'servers' key that is a list of server names to include in the dropdown
-    config: React.PropTypes.object,
+    config: PropTypes.object,
 };
 
 NetworkDropdown.defaultProps = {

@@ -1,3 +1,10 @@
+import SettingsStore from "../../../src/settings/SettingsStore";
+
+const React = require('react');
+const ReactDOM = require("react-dom");
+const TestUtils = require('react-dom/test-utils');
+const expect = require('expect');
+
 /*
 Copyright 2016 OpenMarket Ltd
 
@@ -14,12 +21,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import SettingsStore from "../../../src/settings/SettingsStore";
+import PropTypes from 'prop-types';
 
-const React = require('react');
-const ReactDOM = require("react-dom");
-const TestUtils = require('react-dom/test-utils');
-const expect = require('expect');
 import sinon from 'sinon';
 
 const sdk = require('matrix-react-sdk');
@@ -35,7 +38,7 @@ let client;
 // wrap MessagePanel with a component which provides the MatrixClient in the context.
 class WrappedMessagePanel extends React.Component {
     static childContextTypes = {
-        matrixClient: React.PropTypes.object,
+        matrixClient: PropTypes.object,
     };
 
     getChildContext() {

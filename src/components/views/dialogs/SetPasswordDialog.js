@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import sdk from '../../../index';
 import { _t } from '../../../languageHandler';
@@ -61,7 +63,7 @@ const WarmFuzzy = function(props) {
  */
 export default class SetPasswordDialog extends React.PureComponent {
     static propTypes = {
-        onFinished: React.PropTypes.func.isRequired,
+        onFinished: PropTypes.func.isRequired,
     };
 
     state = {

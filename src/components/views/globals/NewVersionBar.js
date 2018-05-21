@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 
@@ -14,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+import PropTypes from 'prop-types';
 
 import React from 'react';
 import sdk from '../../../index';
@@ -33,9 +35,9 @@ function checkVersion(ver) {
 
 export default class extends React.PureComponent {
     static propTypes = {
-        version: React.PropTypes.string.isRequired,
-        newVersion: React.PropTypes.string.isRequired,
-        releaseNotes: React.PropTypes.string,
+        version: PropTypes.string.isRequired,
+        newVersion: PropTypes.string.isRequired,
+        releaseNotes: PropTypes.string,
     };
 
     displayReleaseNotes = (releaseNotes) => {

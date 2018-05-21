@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Promise from 'bluebird';
 import sdk from '../../../index';
@@ -70,9 +72,9 @@ export default class Notifications extends React.PureComponent {
 
     static propTypes = {
         // The array of threepids from the JS SDK (required for email notifications)
-        threepids: React.PropTypes.array.isRequired,
+        threepids: PropTypes.array.isRequired,
         // The brand string set when creating an email pusher
-        brand: React.PropTypes.string,
+        brand: PropTypes.string,
     };
 
     static defaultProps = {

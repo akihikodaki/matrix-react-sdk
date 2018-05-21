@@ -16,6 +16,8 @@ limitations under the License.
 
 'use strict';
 
+const PropTypes = require('prop-types');
+
 var React = require('react');
 
 var MatrixClientPeg = require('../../MatrixClientPeg');
@@ -38,7 +40,7 @@ linkifyMatrix(linkify);
 
 export default class RoomDirectory extends React.PureComponent {
     static propTypes = {
-        config: React.PropTypes.object,
+        config: PropTypes.object,
     };
 
     static defaultProps = {
@@ -572,7 +574,7 @@ export default class RoomDirectory extends React.PureComponent {
             </div>
         );
     }
-};
+}
 
 // Similar to matrix-react-sdk's MatrixTools.getDisplayAliasForRoom
 // but works with the objects we get from the public room list

@@ -16,12 +16,14 @@ limitations under the License.
 
 'use strict';
 
+var PropTypes = require('prop-types');
+
 var React = require('react');
 import { _t } from '../../languageHandler';
 
 module.exports = class CompatibilityPage extends React.PureComponent {
     static propTypes = {
-        onAccept: React.PropTypes.func
+        onAccept: PropTypes.func
     };
 
     static defaultProps = {

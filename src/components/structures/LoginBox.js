@@ -16,6 +16,8 @@ limitations under the License.
 
 'use strict';
 
+var PropTypes = require('prop-types');
+
 var React = require('react');
 import { _t } from '../../languageHandler';
 var sdk = require('../../index')
@@ -25,7 +27,7 @@ var AccessibleButton = require('../../components/views/elements/AccessibleButton
 
 export default class LoginBox extends React.PureComponent {
     static propTypes = {
-        collapsed: React.PropTypes.bool,
+        collapsed: PropTypes.bool,
     };
 
     onToggleCollapse = (show) => {
@@ -88,4 +90,4 @@ export default class LoginBox extends React.PureComponent {
             </div>
         );
     }
-};
+}

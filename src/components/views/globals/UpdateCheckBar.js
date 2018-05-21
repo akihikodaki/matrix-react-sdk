@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 Copyright 2017 Michael Telatynski <7t3chguy@gmail.com>
 
@@ -14,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+import PropTypes from 'prop-types';
 
 import React from 'react';
 import { _t } from '../../../languageHandler';
@@ -23,10 +25,10 @@ import AccessibleButton from '../../../components/views/elements/AccessibleButto
 
 export default class extends React.PureComponent {
     static propTypes = {
-        status: React.PropTypes.string.isRequired,
+        status: PropTypes.string.isRequired,
         // Currently for error detail but will be usable for download progress
         // once that is a thing that squirrel passes through electron.
-        detail: React.PropTypes.string,
+        detail: PropTypes.string,
     };
 
     static defaultProps = {

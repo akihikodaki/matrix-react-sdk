@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /*
 Copyright 2016 OpenMarket Ltd
 
@@ -36,7 +37,7 @@ const USER_ID = '@me:localhost';
 // wrap TimelinePanel with a component which provides the MatrixClient in the context.
 class WrappedTimelinePanel extends React.Component {
     static childContextTypes = {
-        matrixClient: React.PropTypes.object,
+        matrixClient: PropTypes.object,
     };
 
     getChildContext() {

@@ -15,6 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import sdk from '../../../index';
 import SdkConfig from '../../../SdkConfig';
@@ -199,5 +201,5 @@ export default class BugReportDialog extends React.Component {
 }
 
 BugReportDialog.propTypes = {
-    onFinished: React.PropTypes.func.isRequired,
+    onFinished: PropTypes.func.isRequired,
 };

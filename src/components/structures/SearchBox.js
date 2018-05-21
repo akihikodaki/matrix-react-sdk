@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 
@@ -14,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+import PropTypes from 'prop-types';
 
 import React from 'react';
 import { _t } from '../../languageHandler';
@@ -26,8 +28,8 @@ import AccessibleButton from '../../components/views/elements/AccessibleButton';
 
 export default class  SearchBox extends React.PureComponent {
     static propTypes = {
-        collapsed: React.PropTypes.bool,
-        onSearch: React.PropTypes.func,
+        collapsed: PropTypes.bool,
+        onSearch: PropTypes.func,
     }
 
     state = {

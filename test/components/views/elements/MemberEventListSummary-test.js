@@ -112,9 +112,7 @@ describe('MemberEventListSummary', function() {
             threshold: 3,
         };
 
-        const renderer = ReactTestUtils.createRenderer();
-        renderer.render(<MemberEventListSummary {...props} />);
-        const result = renderer.getRenderOutput();
+        const result = ReactTestUtils.renderIntoDocument(<MemberEventListSummary {...props} />);
 
         expect(result.props.children).toEqual([
           <div className="event_tile" key="event0">Expanded membership</div>,
@@ -134,9 +132,7 @@ describe('MemberEventListSummary', function() {
             threshold: 3,
         };
 
-        const renderer = ReactTestUtils.createRenderer();
-        renderer.render(<MemberEventListSummary {...props} />);
-        const result = renderer.getRenderOutput();
+        const result = ReactTestUtils.renderIntoDocument(<MemberEventListSummary {...props} />);
 
         expect(result.props.children).toEqual([
           <div className="event_tile" key="event0">Expanded membership</div>,

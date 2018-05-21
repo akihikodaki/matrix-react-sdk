@@ -1,3 +1,10 @@
+'use strict';
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+var classNames = require('classnames');
+var sdk = require('../../index');
+
 /*
 Copyright 2017 Vector Creations Ltd
 Copyright 2015, 2016 OpenMarket Ltd
@@ -15,12 +22,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+import PropTypes from 'prop-types';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var classNames = require('classnames');
-var sdk = require('../../index');
 import { Droppable } from 'react-beautiful-dnd';
 import { _t } from '../../languageHandler';
 var dis = require('../../dispatcher');
@@ -42,27 +45,27 @@ class RoomSubList extends React.PureComponent {
     debug = debug;
 
     static propTypes = {
-        list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-        label: React.PropTypes.string.isRequired,
-        tagName: React.PropTypes.string,
-        editable: React.PropTypes.bool,
+        list: PropTypes.arrayOf(PropTypes.object).isRequired,
+        label: PropTypes.string.isRequired,
+        tagName: PropTypes.string,
+        editable: PropTypes.bool,
 
-        order: React.PropTypes.string.isRequired,
+        order: PropTypes.string.isRequired,
 
         // passed through to RoomTile and used to highlight room with `!` regardless of notifications count
-        isInvite: React.PropTypes.bool,
+        isInvite: PropTypes.bool,
 
-        startAsHidden: React.PropTypes.bool,
-        showSpinner: React.PropTypes.bool, // true to show a spinner if 0 elements when expanded
-        collapsed: React.PropTypes.bool.isRequired, // is LeftPanel collapsed?
-        onHeaderClick: React.PropTypes.func,
-        alwaysShowHeader: React.PropTypes.bool,
-        incomingCall: React.PropTypes.object,
-        onShowMoreRooms: React.PropTypes.func,
-        searchFilter: React.PropTypes.string,
-        emptyContent: React.PropTypes.node, // content shown if the list is empty
-        headerItems: React.PropTypes.node, // content shown in the sublist header
-        extraTiles: React.PropTypes.arrayOf(React.PropTypes.node), // extra elements added beneath tiles
+        startAsHidden: PropTypes.bool,
+        showSpinner: PropTypes.bool, // true to show a spinner if 0 elements when expanded
+        collapsed: PropTypes.bool.isRequired, // is LeftPanel collapsed?
+        onHeaderClick: PropTypes.func,
+        alwaysShowHeader: PropTypes.bool,
+        incomingCall: PropTypes.object,
+        onShowMoreRooms: PropTypes.func,
+        searchFilter: PropTypes.string,
+        emptyContent: PropTypes.node, // content shown if the list is empty
+        headerItems: PropTypes.node, // content shown in the sublist header
+        extraTiles: PropTypes.arrayOf(PropTypes.node), // extra elements added beneath tiles
     };
 
     state = {

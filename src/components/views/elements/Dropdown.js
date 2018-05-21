@@ -58,7 +58,7 @@ class MenuOption extends React.Component {
 
 MenuOption.propTypes = {
     children: PropTypes.oneOfType([
-      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
     highlighted: PropTypes.bool,
